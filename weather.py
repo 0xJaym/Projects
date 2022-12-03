@@ -1,49 +1,26 @@
-
-import requests
-
-city = input("Enter the City name : ")
-print(city)
-
-print("Displaying weathe report for : "+city)
-
-url="https://wttr.in/{}".format(city)
-res = requests.get(url)
-print(res.text)
-
-
-
-import requests
-res = requests.get('https://ipinfo.io/')
-data = res.json()
-citydata = data['city']
-print(citydata)
-url = 'https://wttr.in/{}'.format(citydata)
-res = requests.get(url)
-print(res.text)
-
-
-
-import requests
 from bs4 import BeautifulSoup
-city=input("Enter the city")
-url="https://www.google.com/search?q="+"weather"+city
-html = requests.get(url).content
-soup = BeautifulSoup(html, 'html.parser')
-temp = soup.find('div', attrs={'class': 'BNeawe iBp4i AP7Wnd'}).text
-str = soup.find('div',attrs={'class': 'BNeawe tAd8D AP7Wnd'}).text
-data = str.split("\n")
-time = data[0]
-sky = data [1]
-
-listdiv = soup.findAll('div', attrs={'class': 'BNeawe s3v9rd AP7Wnd'})
+import requests
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
  
-# particular list with required data
-strd = listdiv[5].text
  
-# formatting the string
-pos = strd.find('Wind')
-other_data = strd[pos:]
-print("Temperature is", temp)
-print("Time: ", time)
-print("Sky Description: ", sky)
-print(other_data)
+def weather(city):
+    city = city.replace(" ", "+")
+    res = requests.get(
+        f'https://www.google.com/search?q={city}&oq={city}&aqs=chrome.0.35i39l2j0l4j46j69i60.6128j1j7&sourceid=chrome&ie=UTF-8', headers=headers)
+    print("Searching...\n")
+    soup = BeautifulSoup(res.text, 'html.parser')
+    location = soup.select('#wob_loc')[0].getText().strip()
+    time = soup.select('#wob_dts')[0].getText().strip()
+    info = soup.select('#wob_dc')[0].getText().strip()
+    weather = soup.select('#wob_tm')[0].getText().strip()
+    print(location)
+    print(time)
+    print(info)
+    print(weather+"°C")
+ 
+ 
+city = input("Enter the Name of City ->  ")
+city = city+" weather"
+weather(city)
+print("Have a Nice Day:)")
